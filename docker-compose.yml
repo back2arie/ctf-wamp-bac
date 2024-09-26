@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  crossbar:
+    build: ./crossbar
+    ports:
+      - "8080:8080"  # Crossbar will expose WebSocket on this port
+    volumes:
+      - ./crossbar/crossbar.json:/node/.crossbar/config.json  # Mount your router config
+  backend:
+    build: ./backend
+    environment:
+      - CROSSBAR_URL=ws://crossbar:8080/ws  # Crossbar WebSocket address inside the network
+    depends_on:
+      - crossbar  # Ensure the backend waits for the Crossbar router to start
+    volumes:
+      - ./backend:/app  # Mount the backend folder for code updates
+    
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"  # Web server for serving the frontend
+    depends_on:
+      - crossbar  # Ensure frontend waits for Crossbar to start

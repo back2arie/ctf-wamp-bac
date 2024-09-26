@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Challenge by back2arie - BAC in WAMP</title>
+</head>
+<body>
+    <h1>CTF Challenge by back2arie</h1>
+    <h2>BAC in WAMP</h2>
+    <h3>User Area</h3>
+    <input type="text" id="flagInput" placeholder="Enter Flag" />
+    <button id="submitFlag">Submit Flag</button>
+    <pre id="response"></pre>
+
+    <h2>Instruction</h2>
+    <ol>    
+        <li>There are 2 pages, index.html & admin.html</li>
+        <li>Your objective is to find the correct flag</li>
+    </ol>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autobahn/20.7.1/autobahn.min.js"></script>
+    <script>
+        var connection = new autobahn.Connection({
+            url: 'ws://localhost:8080/ws',
+            realm: 'realm1',
+            authmethods: ["wampcra", "anonymous"],
+            authid: 'user1',
+            onchallenge: function (session, method, extra) {
+                if (method === 'wampcra') {
+                    return autobahn.auth_cra.sign('user-password', extra.challenge);
+                }
+            }
+        });
+
+        connection.onopen = (session) => {
+            console.log("Frontend connected to WAMP router");
+
+            document.getElementById("submitFlag").onclick = () => {
+                const flag = document.getElementById("flagInput").value;
+                session.call('ctf.wamp.validate_flag', [flag], {}, {}).then((response) => {
+                    document.getElementById("response").innerText = JSON.stringify(response);
+                });
+            };
+        };
+
+        connection.open();
+    </script>
+</body>
+</html>

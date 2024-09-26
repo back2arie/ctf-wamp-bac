@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "workers": [
+    {
+      "type": "router",
+      "realms": [
+        {
+          "name": "realm1",
+          "roles": [
+            {
+              "name": "admin",
+              "permissions": [
+                {
+                  "uri": "ctf.wamp.get_flag",
+                  "match": "exact",
+                  "allow": {
+                    "call": true,
+                    "register": false,
+                    "publish": false,
+                    "subscribe": false
+                  },
+                  "disclose": {
+                    "caller": true
+                  }
+                }
+              ]
+            },
+            {
+              "name": "user",
+              "permissions": [
+                {
+                  "uri": "ctf.wamp.get_flag",
+                  "match": "exact",
+                  "allow": {
+                    "call": true,
+                    "register": false,
+                    "publish": false,
+                    "subscribe": false
+                  },
+                  "disclose": {
+                    "caller": true
+                  }
+                },
+                {
+                  "uri": "ctf.wamp.validate_flag",
+                  "match": "exact",
+                  "allow": {
+                    "call": true,
+                    "register": false,
+                    "publish": false,
+                    "subscribe": false
+                  }
+                }
+              ]
+            },
+            {
+              "name": "backend",
+              "permissions": [
+                {
+                  "uri": "ctf.wamp.get_flag",
+                  "match": "exact",
+                  "allow": {
+                    "call": true,
+                    "register": true,
+                    "publish": true,
+                    "subscribe": true
+                  },
+                  "disclose": {
+                    "caller": true
+                  }
+                },
+                {
+                  "uri": "ctf.wamp.validate_flag",
+                  "match": "exact",
+                  "allow": {
+                    "call": true,
+                    "register": true,
+                    "publish": true,
+                    "subscribe": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "transports": [
+        {
+          "type": "web",
+          "endpoint": {
+            "type": "tcp",
+            "port": 8080
+          },
+          "paths": {
+            "ws": {
+              "type": "websocket",
+              "auth": {
+                "wampcra": {
+                  "type": "static",
+                  "users": {
+                    "admin1": {
+                      "secret": "admin-password",
+                      "role": "admin"
+                    },
+                    "user1": {
+                      "secret": "user-password",
+                      "role": "user"
+                    },
+                    "backend-service": {
+                      "secret": "m4USk&xa",
+                      "role": "backend"
+                    }
+                  }
+                }
+              }
+            },
+            "/": {
+              "type": "static",
+              "directory": "./web"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
