@@ -8,4 +8,6 @@ CTF Challenge - Broken Access Control in WAMP (Web Application Messaging Protoco
 docker compose up --build
 ```
 
+![Setup](setup.png)
+
 Open `http://localhost/index.html`
